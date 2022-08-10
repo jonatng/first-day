@@ -1,16 +1,21 @@
-#!/bin/zsh
+echo "Script to install all dependencies"
 
-#Script to install all dependencies
-
-mkdir /Script
-touch /scriptfile.txt
-echo "Testing Script File" >> /scriptfile.txt
-
-plugins=
 #Install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-#Download and Install Node JS
+#brew doctor - 'Warning: <path> was not tapped properly! run...
+
+#Install Node JS
+brew install node
+
+#Install Git
+brew install git
+
+#Install GitHub CLI
+brew install gh
+
+#Install Maven
+brew install maven
 
 #Install Salesforce CLI
 npm install sfdx-cli --global
@@ -21,8 +26,4 @@ sfdx --version
 #Verify the Salesforce CLI plug-in version
 sfdx plugins --core
 
-#Install GitHub CLI
-
-#Install Maven
-
-#brew doctor - 'Warning: <path> was not tapped properly! run...
+echo "Installation is complete"
