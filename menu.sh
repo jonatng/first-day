@@ -66,7 +66,7 @@ NC='\033[0m' # No Color
 echo -e "\n ${RED} DX Commands: ${NC} \n"
 PS3=" Enter your choice :"
 while true; do
-    options=("list-orgs" "refresh-orgs-list" "login-to-new-org" "new-project" "retrieve" "deploy" "query" "describe-object" "open-home" "open-setup" "open-dev" "search-for-errors" "tail-logs" "which-user-am-i" "switch-user" "remove-org" "lint-current" "exit")
+    options=("list-orgs" "refresh-orgs-list" "login-to-new-org" "new-project" "retrieve" "deploy" "query" "describe-object" "open-home" "open-setup" "open-dev" "search-for-errors" "tail-logs" "which-user-am-i" "switch-user" "remove-org" "lint-current" "generate-csv" "exit")
     echo -e " ${RED} Choose an option: ${NC} "
     select opt in "${options[@]}"; do
         case $opt in
@@ -87,7 +87,7 @@ while true; do
             "open-setup") open "/lightning/setup/SetupOneHome/home"; break ;;
             "remove-org")  select-username; run "sfdx force:org:delete -u $username"; run "sfdx force:org:list --clean > ~/.dxorgs; cat ~/.dxorgs"; break ;;
             "lint-current") run "sfdx force:lightning:lint force-app/main/default/aura"; break ;;
-            "generate-csv") run "sfdx force:data:soql:query -q "SELECT Id,Name,Status__c FROM Property__c" --resultformat csv"; break ;;
+            "generate-csv") run "sfdx force:data:soql:query -q "SELECT Id, Name FROM Account LIMIT 10" -u="user@sfdc.com" -r=csv > results.csv"; break ;;
             "exit") break 2 ;;
             *) echo "What's that?" >&2
         esac
