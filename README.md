@@ -1,8 +1,7 @@
 #########################################################
 # Welcome to Salesforce Git & Terminal customization
-#
-#
-#
+# Description: 
+#        Note:
 #########################################################
 
 Background:
