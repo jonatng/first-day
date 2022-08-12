@@ -1,7 +1,5 @@
-csv script
-
 #!/bin/bash
-# SFDX script to query and generate csv
+# SFDX Menu
 # 
 
 function run {
@@ -25,16 +23,42 @@ function login {
     read -p " Which sandbox (y/n)? : " issandbox
     sandboxstr=""
     if [[ "$issandbox" =~ ^(yes|y)$ ]] ; then
-        sandboxstr=" -r https://bashcom-dev-ed.my.salesforce.com"
+        sandboxstr=" -r https://test.salesforce.com"
     else 
         sandboxstr=
     fi
     run "sfdx force:auth:web:login -a $alias $sandboxstr"       
 }
 
+function new-project {
+    read -p " Which name? : " project
+    run "sfdx force:project:create -x -n $project"       
+}
+
+function retrieve {
+    read -p " Which alias? : " alias
+    read -p " Which metadata? ApexClass, AuraDefinitionBundle... : " metadata
+    run "sfdx force:source:retrieve -m $metadata -u $alias"       
+}
+
+function deploy {
+    read -p " Which alias? : " alias
+    read -p " Which metadata? ApexClass, AuraDefinitionBundle... : " metadata
+    run "sfdx force:source:deploy -m $metadata -u $alias"       
+}
+
 function open {
     select-username
     run "sfdx force:org:open -p $1 -u $username"
+}
+
+function list-orgs {
+    if [ -e ~/.dxorgs ] 
+    then 
+        run "cat ~/.dxorgs"
+    else 
+        run "sfdx force:org:list --clean > ~/.dxorgs; cat ~/.dxorgs" 
+    fi
 }
 
 RED='\033[0;35m'
@@ -43,7 +67,7 @@ echo -e "\n ${RED} DX Commands: ${NC} \n"
 PS3=" Enter your choice :"
 while true; do
     options=("list-orgs" "refresh-orgs-list" "login-to-new-org" "new-project" "retrieve" "deploy" "query" "describe-object" "open-home" "open-setup" "open-dev" "search-for-errors" "tail-logs" "which-user-am-i" "switch-user" "remove-org" "lint-current" "exit")
-    echo -e " ${RED} MyDX : Choose an option: ${NC} "
+    echo -e " ${RED} Choose an option: ${NC} "
     select opt in "${options[@]}"; do
         case $opt in
             "list-orgs") list-orgs; break ;;
@@ -63,9 +87,11 @@ while true; do
             "open-setup") open "/lightning/setup/SetupOneHome/home"; break ;;
             "remove-org")  select-username; run "sfdx force:org:delete -u $username"; run "sfdx force:org:list --clean > ~/.dxorgs; cat ~/.dxorgs"; break ;;
             "lint-current") run "sfdx force:lightning:lint force-app/main/default/aura"; break ;;
+            "generate-csv") run "sfdx force:data:soql:query -q "SELECT Id,Name,Status__c FROM Property__c" --resultformat csv"; break ;;
             "exit") break 2 ;;
             *) echo "What's that?" >&2
         esac
     done
 done
+
 exit 0
