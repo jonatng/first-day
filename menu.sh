@@ -23,7 +23,7 @@ function login {
     read -p " Which sandbox (y/n)? : " issandbox
     sandboxstr=""
     if [[ "$issandbox" =~ ^(yes|y)$ ]] ; then
-        sandboxstr=" -r https://test.salesforce.com"
+        sandboxstr=" -r https://login.salesforce.com/"
     else 
         sandboxstr=
     fi
@@ -75,7 +75,7 @@ while true; do
             "new-project") new-project; break ;;
             "retrieve") retrieve; break;;
             "deploy") deploy; break;;
-            "query") read -p "SOQL : " soql; run 'sfdx force:data:soql:query -q "$soql"'; break;;
+            "query") read -p "SOQL : " soql; run 'sfdx force:data:soql:query -q "$soql"' -u="jonatng@summerdale.com"; break;;
             "describe-object") read -p "Object : " object; run 'sfdx force:schema:sobject:describe -s $object --json | jq'; break;;
             "refresh-orgs-list") run "sfdx force:org:list --clean > ~/.dxorgs; cat ~/.dxorgs"; break ;;
             "search-for-errors") run "sfdx force:apex:log:get -n 15 -c | grep -iE 'FATAL|ERROR|EXCEPTION' -C 10 --color=always"; break ;;
@@ -87,7 +87,7 @@ while true; do
             "open-setup") open "/lightning/setup/SetupOneHome/home"; break ;;
             "remove-org")  select-username; run "sfdx force:org:delete -u $username"; run "sfdx force:org:list --clean > ~/.dxorgs; cat ~/.dxorgs"; break ;;
             "lint-current") run "sfdx force:lightning:lint force-app/main/default/aura"; break ;;
-            "generate-csv") run "sfdx force:data:soql:query -q "SELECT Id, Name FROM Account LIMIT 10" -u="user@sfdc.com" -r=csv > results.csv"; break ;;
+            "generate-csv") "sfdx force:data:soql:query -q "SELECT Id, Name FROM Account LIMIT 10" -u="user@sfdc.com" -r=csv > results.csv"; break ;;
             "exit") break 2 ;;
             *) echo "What's that?" >&2
         esac
